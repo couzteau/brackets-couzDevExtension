@@ -29,33 +29,78 @@ define(function (require, exports, module) {
 
 
     // Brackets modules
-    var ProjectManager = brackets.getModule("project/ProjectManager"),
-        ExtensionUtils = brackets.getModule("utils/ExtensionUtils"),
-        FileUtils           = brackets.getModule("file/FileUtils"),
-        NativeFileSystem    = brackets.getModule("file/NativeFileSystem").NativeFileSystem,
-        Menus = brackets.getModule("command/Menus"),
-        CommandManager = brackets.getModule("command/CommandManager"),
-        EditorManager       = brackets.getModule("editor/EditorManager");
+    var ProjectManager          = brackets.getModule("project/ProjectManager"),
+        ExtensionUtils          = brackets.getModule("utils/ExtensionUtils"),
+        FileUtils               = brackets.getModule("file/FileUtils"),
+        NativeFileSystem        = brackets.getModule("file/NativeFileSystem").NativeFileSystem,
+        Menus                   = brackets.getModule("command/Menus"),
+        CommandManager          = brackets.getModule("command/CommandManager"),
+        Commands                = brackets.getModule("command/Commands"),        
+        DocumentManager         = brackets.getModule("document/DocumentManager"),
+        EditorManager           = brackets.getModule("editor/EditorManager");
     
-    var SPIN_COUZ = "spinCouz";
+    var EDITOR_MANAGER_EXAMPLES = "editorManagerExamples",
+        OPEN_IMAGE              = "openImage",
+        GET_DOCUMENT_FOR_PATH   = "getDocumentForPath";
     
-    function _spinCouz(event) {
+    function _editorManagerExamples(event) {
         var activeEditor = EditorManager.getActiveEditor(),
-            activeDoc = activeEditor && activeEditor.document;
+            activeDoc = activeEditor && activeEditor.document,
+            doc;
         
-        var x = 1;
-
+        var editor = EditorManager.getFocusedEditor();
+        if (editor) {
+            doc = editor.document;
+        }
+        
+        editor = EditorManager.getActiveEditor();
+        if (editor) {
+            doc = editor.document;
+        }
+        
+        editor = EditorManager.getCurrentFullEditor();
+        if (editor) {
+            doc = editor.document;
+        }
+    }
+    
+    function _getDocumentForPath() {
+        var fullPath = ExtensionUtils.getModulePath(module) + "img/playbot.png";
+        DocumentManager.getDocumentForPath(fullPath)
+            .done(function (doc) {
+                DocumentManager.setCurrentDocument(doc);
+            })
+            .fail(function (fileError) {
+                EditorManager.focusEditor();
+                FileUtils.showFileOpenError(fileError.name, fullPath);
+            });
+    }
+    
+    function _openImage() {
+        var fullPath = ExtensionUtils.getModulePath(module) + "img/playbot.png";
+        CommandManager.execute(Commands.FILE_OPEN, { fullPath: fullPath });
     }
     
     var buildMenu = function (m) {
         m.addMenuDivider();
-        m.addMenuItem(SPIN_COUZ);
-
+        m.addMenuItem(EDITOR_MANAGER_EXAMPLES);
+        m.addMenuItem(GET_DOCUMENT_FOR_PATH);
+        m.addMenuItem(OPEN_IMAGE);        
     };
     
-    CommandManager.register("spin couz", SPIN_COUZ, _spinCouz);
-    
+    function _onCurrentDocumentChange() {
+        var doc = DocumentManager.getCurrentDocument();
+        if (doc) { // make sure to check for null
+            var x = 1;
+        }
+       // even better use example above 
+    }
 
+    
+    CommandManager.register("EditorManager Examples", EDITOR_MANAGER_EXAMPLES, _editorManagerExamples);
+    CommandManager.register("getDocumentforPath Example", GET_DOCUMENT_FOR_PATH, _getDocumentForPath);
+    CommandManager.register("Open image", OPEN_IMAGE, _openImage);
+    
     
     
     var menu = Menus.getMenu(Menus.AppMenuBar.EDIT_MENU);
@@ -69,6 +114,9 @@ define(function (require, exports, module) {
 //        var $ProjectManager = $(ProjectManager);
 //        $ProjectManager.on("projectOpen", _projectOpen);
 //        window.addEventListener("focus", _projectOpen);
+        
+
+        $(DocumentManager).on("currentDocumentChange", _onCurrentDocumentChange);
         
 
     }
