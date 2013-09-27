@@ -22,43 +22,102 @@
  */
 
 /*jslint vars: true, plusplus: true, browser: true, nomen: true, indent: 4, maxerr: 50 */
-/*global define, $, brackets */
+/*global define, $, brackets, console */
 
 define(function (require, exports, module) {
     'use strict';
 
 
     // Brackets modules
-    var ProjectManager = brackets.getModule("project/ProjectManager"),
-        ExtensionUtils = brackets.getModule("utils/ExtensionUtils"),
-        FileUtils           = brackets.getModule("file/FileUtils"),
-        NativeFileSystem    = brackets.getModule("file/NativeFileSystem").NativeFileSystem,
-        Menus = brackets.getModule("command/Menus"),
-        CommandManager = brackets.getModule("command/CommandManager"),
-        EditorManager       = brackets.getModule("editor/EditorManager");
+    var ProjectManager          = brackets.getModule("project/ProjectManager"),
+        ExtensionUtils          = brackets.getModule("utils/ExtensionUtils"),
+        FileUtils               = brackets.getModule("file/FileUtils"),
+        NativeFileSystem        = brackets.getModule("file/NativeFileSystem").NativeFileSystem,
+        Menus                   = brackets.getModule("command/Menus"),
+        CommandManager          = brackets.getModule("command/CommandManager"),
+        Commands                = brackets.getModule("command/Commands"),
+        DocumentManager         = brackets.getModule("document/DocumentManager"),
+        EditorManager           = brackets.getModule("editor/EditorManager");
     
-    var SPIN_COUZ = "spinCouz";
+    var EDITOR_MANAGER_EXAMPLES = "editorManagerExamples",
+        OPEN_IMAGE              = "openImage",
+        GET_DOCUMENT_FOR_PATH   = "getDocumentForPath";
     
-    function _spinCouz(event) {
+    function _editorManagerExamples() {
         var activeEditor = EditorManager.getActiveEditor(),
-            activeDoc = activeEditor && activeEditor.document;
+            activeDoc = activeEditor && activeEditor.document,
+            doc;
         
-        var x = 1;
-
+        var editor = EditorManager.getFocusedEditor();
+        if (editor) {
+            doc = editor.document;
+        }
+        
+        editor = EditorManager.getActiveEditor();
+        if (editor) {
+            doc = editor.document;
+        }
+        
+        editor = EditorManager.getCurrentFullEditor();
+        if (editor) {
+            doc = editor.document;
+        }
+    }
+    
+    function _getDocumentForPath() {
+        var fullPath = ExtensionUtils.getModulePath(module) + "img/playbot.png";
+        DocumentManager.getDocumentForPath(fullPath)
+            .done(function (doc) {
+                console.log("We should not even ben here.");
+            })
+            .fail(function (fileError) {
+                EditorManager.focusEditor();
+                FileUtils.showFileOpenError(fileError.name, fullPath);
+            });
+    }
+    
+    function _openImage() {
+        var fullPath = ExtensionUtils.getModulePath(module) + "img/playbot.png";
+        CommandManager.execute(Commands.FILE_OPEN, { fullPath: fullPath });
     }
     
     var buildMenu = function (m) {
         m.addMenuDivider();
-        m.addMenuItem(SPIN_COUZ);
-
+        m.addMenuItem(EDITOR_MANAGER_EXAMPLES);
+        m.addMenuItem(GET_DOCUMENT_FOR_PATH);
+        m.addMenuItem(OPEN_IMAGE);
     };
     
-    CommandManager.register("spin couz", SPIN_COUZ, _spinCouz);
+    function _onCurrentDocumentChange(event) {
+        var doc = DocumentManager.getCurrentDocument();
+        if (doc) { // make sure to check for null
+            console.log(" doc ");
+        }
+       // even better use example above 
+    }
     
+    function _onActiveEditorChange(event, current, previous) {
+        var activeEditor = EditorManager.getActiveEditor(),
+            activeDoc = activeEditor && activeEditor.document;
+        if (event) {
+            console.log(" event " + JSON.stringify(event));
+        }
+        if (current) {
+            console.log(" current ");
+        }
+        if (previous) {
+            console.log(" previous ");
+        }
+    }
 
     
+    CommandManager.register("EditorManager Examples", EDITOR_MANAGER_EXAMPLES, _editorManagerExamples);
+    CommandManager.register("getDocumentforPath Example", GET_DOCUMENT_FOR_PATH, _getDocumentForPath);
+    CommandManager.register("Open image", OPEN_IMAGE, _openImage);
     
-    var menu = Menus.getMenu(Menus.AppMenuBar.EDIT_MENU);
+    
+    
+    var menu = Menus.getMenu(Menus.AppMenuBar.HELP_MENU);
     buildMenu(menu);
 
     // -----------------------------------------
@@ -69,6 +128,10 @@ define(function (require, exports, module) {
 //        var $ProjectManager = $(ProjectManager);
 //        $ProjectManager.on("projectOpen", _projectOpen);
 //        window.addEventListener("focus", _projectOpen);
+        
+
+        $(DocumentManager).on("currentDocumentChange", _onCurrentDocumentChange);
+        $(EditorManager).on("activeEditorChange", _onActiveEditorChange);
         
 
     }
