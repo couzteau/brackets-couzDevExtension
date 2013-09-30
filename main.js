@@ -35,7 +35,7 @@ define(function (require, exports, module) {
         NativeFileSystem        = brackets.getModule("file/NativeFileSystem").NativeFileSystem,
         Menus                   = brackets.getModule("command/Menus"),
         CommandManager          = brackets.getModule("command/CommandManager"),
-        Commands                = brackets.getModule("command/Commands"),        
+        Commands                = brackets.getModule("command/Commands"),
         DocumentManager         = brackets.getModule("document/DocumentManager"),
         EditorManager           = brackets.getModule("editor/EditorManager");
     
@@ -68,7 +68,7 @@ define(function (require, exports, module) {
         var fullPath = ExtensionUtils.getModulePath(module) + "img/playbot.png";
         DocumentManager.getDocumentForPath(fullPath)
             .done(function (doc) {
-                DocumentManager.setCurrentDocument(doc);
+                console.log("Dot doc for path " + fullPath);
             })
             .fail(function (fileError) {
                 EditorManager.focusEditor();
@@ -85,7 +85,7 @@ define(function (require, exports, module) {
         m.addMenuDivider();
         m.addMenuItem(EDITOR_MANAGER_EXAMPLES);
         m.addMenuItem(GET_DOCUMENT_FOR_PATH);
-        m.addMenuItem(OPEN_IMAGE);        
+        m.addMenuItem(OPEN_IMAGE);
     };
     
     function _onCurrentDocumentChange() {
