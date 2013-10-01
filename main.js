@@ -22,7 +22,7 @@
  */
 
 /*jslint vars: true, plusplus: true, browser: true, nomen: true, indent: 4, maxerr: 50 */
-/*global define, $, brackets */
+/*global define, $, brackets, console */
 
 define(function (require, exports, module) {
     'use strict';
@@ -68,7 +68,7 @@ define(function (require, exports, module) {
         var fullPath = ExtensionUtils.getModulePath(module) + "img/playbot.png";
         DocumentManager.getDocumentForPath(fullPath)
             .done(function (doc) {
-                console.log("Dot doc for path " + fullPath);
+                console.log("We should not even ben here.");
             })
             .fail(function (fileError) {
                 EditorManager.focusEditor();
@@ -103,7 +103,7 @@ define(function (require, exports, module) {
     
     
     
-    var menu = Menus.getMenu(Menus.AppMenuBar.EDIT_MENU);
+    var menu = Menus.getMenu(Menus.AppMenuBar.HELP_MENU);
     buildMenu(menu);
 
     // -----------------------------------------
