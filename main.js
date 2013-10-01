@@ -44,6 +44,7 @@ define(function (require, exports, module) {
         GET_DOCUMENT_FOR_PATH   = "getDocumentForPath";
     
     function _editorManagerExamples() {
+
         var activeEditor = EditorManager.getActiveEditor(),
             activeDoc = activeEditor && activeEditor.document,
             doc;
@@ -110,13 +111,12 @@ define(function (require, exports, module) {
         }
     }
 
+
     
     CommandManager.register("EditorManager Examples", EDITOR_MANAGER_EXAMPLES, _editorManagerExamples);
     CommandManager.register("getDocumentforPath Example", GET_DOCUMENT_FOR_PATH, _getDocumentForPath);
     CommandManager.register("Open image", OPEN_IMAGE, _openImage);
-    
-    
-    
+
     var menu = Menus.getMenu(Menus.AppMenuBar.HELP_MENU);
     buildMenu(menu);
 
@@ -124,16 +124,8 @@ define(function (require, exports, module) {
     // Init
     // -----------------------------------------
     function init() {
-//        ExtensionUtils.loadStyleSheet(module, "styles.css");
-//        var $ProjectManager = $(ProjectManager);
-//        $ProjectManager.on("projectOpen", _projectOpen);
-//        window.addEventListener("focus", _projectOpen);
-        
-
         $(DocumentManager).on("currentDocumentChange", _onCurrentDocumentChange);
         $(EditorManager).on("activeEditorChange", _onActiveEditorChange);
-        
-
     }
     
     init();
