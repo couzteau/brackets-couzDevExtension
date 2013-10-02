@@ -41,6 +41,7 @@ define(function (require, exports, module) {
     
     var EDITOR_MANAGER_EXAMPLES = "editorManagerExamples",
         OPEN_IMAGE              = "openImage",
+        OPEN_LARGE_IMAGE        = "openLargeImage",
         GET_DOCUMENT_FOR_PATH   = "getDocumentForPath";
     
     function _editorManagerExamples() {
@@ -66,7 +67,9 @@ define(function (require, exports, module) {
     }
     
     function _getDocumentForPath() {
-        var fullPath = ExtensionUtils.getModulePath(module) + "img/playbot.png";
+        //var fullPath = ExtensionUtils.getModulePath(module) + "img/playbot.png";
+        var fullPath = ExtensionUtils.getModulePath(module) + "img/P1090228.jpg";
+        
         DocumentManager.getDocumentForPath(fullPath)
             .done(function (doc) {
                 console.log("We should not even ben here.");
@@ -82,11 +85,17 @@ define(function (require, exports, module) {
         CommandManager.execute(Commands.FILE_OPEN, { fullPath: fullPath });
     }
     
+    function _openLargeImage() {
+        var fullPath = ExtensionUtils.getModulePath(module) + "img/P1090228.jpg";
+        CommandManager.execute(Commands.FILE_OPEN, { fullPath: fullPath });
+    }    
+    
     var buildMenu = function (m) {
         m.addMenuDivider();
         m.addMenuItem(EDITOR_MANAGER_EXAMPLES);
         m.addMenuItem(GET_DOCUMENT_FOR_PATH);
         m.addMenuItem(OPEN_IMAGE);
+        m.addMenuItem(OPEN_LARGE_IMAGE);
     };
     
     function _onCurrentDocumentChange(event) {
@@ -116,6 +125,7 @@ define(function (require, exports, module) {
     CommandManager.register("EditorManager Examples", EDITOR_MANAGER_EXAMPLES, _editorManagerExamples);
     CommandManager.register("getDocumentforPath Example", GET_DOCUMENT_FOR_PATH, _getDocumentForPath);
     CommandManager.register("Open image", OPEN_IMAGE, _openImage);
+    CommandManager.register("Open large image", OPEN_LARGE_IMAGE, _openLargeImage);
 
     var menu = Menus.getMenu(Menus.AppMenuBar.HELP_MENU);
     buildMenu(menu);
