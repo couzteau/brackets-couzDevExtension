@@ -42,6 +42,7 @@ define(function (require, exports, module) {
     var EDITOR_MANAGER_EXAMPLES = "editorManagerExamples",
         OPEN_IMAGE              = "openImage",
         OPEN_LARGE_IMAGE        = "openLargeImage",
+        CLOSE_ALL               = "closeAll",
         GET_DOCUMENT_FOR_PATH   = "getDocumentForPath";
     
     function _editorManagerExamples() {
@@ -88,7 +89,12 @@ define(function (require, exports, module) {
     function _openLargeImage() {
         var fullPath = ExtensionUtils.getModulePath(module) + "img/P1090228.jpg";
         CommandManager.execute(Commands.FILE_OPEN, { fullPath: fullPath });
-    }    
+    }
+    
+    function _closeAll() {
+        DocumentManager.closeAll();
+        //CommandManager.execute(Commands.FILE_CLOSE_ALL, {  });
+    }
     
     var buildMenu = function (m) {
         m.addMenuDivider();
@@ -96,6 +102,7 @@ define(function (require, exports, module) {
         m.addMenuItem(GET_DOCUMENT_FOR_PATH);
         m.addMenuItem(OPEN_IMAGE);
         m.addMenuItem(OPEN_LARGE_IMAGE);
+        m.addMenuItem(CLOSE_ALL);
     };
     
     function _onCurrentDocumentChange(event) {
@@ -126,6 +133,7 @@ define(function (require, exports, module) {
     CommandManager.register("getDocumentforPath Example", GET_DOCUMENT_FOR_PATH, _getDocumentForPath);
     CommandManager.register("Open image", OPEN_IMAGE, _openImage);
     CommandManager.register("Open large image", OPEN_LARGE_IMAGE, _openLargeImage);
+    CommandManager.register("Close All", CLOSE_ALL, _closeAll);    
 
     var menu = Menus.getMenu(Menus.AppMenuBar.HELP_MENU);
     buildMenu(menu);
