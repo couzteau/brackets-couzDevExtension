@@ -43,6 +43,7 @@ define(function (require, exports, module) {
         OPEN_IMAGE              = "openImage",
         OPEN_LARGE_IMAGE        = "openLargeImage",
         CLOSE_ALL               = "closeAll",
+        CLOSE_IMAGE             = "closeImage",
         GET_DOCUMENT_FOR_PATH   = "getDocumentForPath";
     
     function _editorManagerExamples() {
@@ -93,7 +94,12 @@ define(function (require, exports, module) {
     
     function _closeAll() {
         DocumentManager.closeAll();
-        //CommandManager.execute(Commands.FILE_CLOSE_ALL, {  });
+        
+    }
+    
+    function _closeImage() {
+        var fullPath = ExtensionUtils.getModulePath(module) + "img/P1090228.jpg";
+        CommandManager.execute(Commands.FILE_CLOSE, { file: new NativeFileSystem.FileEntry(fullPath)});
     }
     
     var buildMenu = function (m) {
@@ -103,6 +109,7 @@ define(function (require, exports, module) {
         m.addMenuItem(OPEN_IMAGE);
         m.addMenuItem(OPEN_LARGE_IMAGE);
         m.addMenuItem(CLOSE_ALL);
+        m.addMenuItem(CLOSE_IMAGE);
     };
     
     function _onCurrentDocumentChange(event) {
@@ -133,7 +140,8 @@ define(function (require, exports, module) {
     CommandManager.register("getDocumentforPath Example", GET_DOCUMENT_FOR_PATH, _getDocumentForPath);
     CommandManager.register("Open image", OPEN_IMAGE, _openImage);
     CommandManager.register("Open large image", OPEN_LARGE_IMAGE, _openLargeImage);
-    CommandManager.register("Close All", CLOSE_ALL, _closeAll);    
+    CommandManager.register("Close All", CLOSE_ALL, _closeAll);
+    CommandManager.register("Close large Image", CLOSE_IMAGE, _closeImage);
 
     var menu = Menus.getMenu(Menus.AppMenuBar.HELP_MENU);
     buildMenu(menu);
